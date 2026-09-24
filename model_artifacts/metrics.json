@@ -1,0 +1,68 @@
+{
+  "isolation_forest_auc": 0.9933518494897958,
+  "xgboost_auc": 1.0,
+  "xgboost_avg_precision": 1.0,
+  "ensemble_auc": 0.9999998724489796,
+  "alert_threshold": 0.2656009174248599,
+  "ensemble_weights": {
+    "isolation_forest": 0.35,
+    "xgboost": 0.65
+  },
+  "classification_report": {
+    "0": {
+      "precision": 1.0,
+      "recall": 0.9977551020408163,
+      "f1-score": 0.9988762897129431,
+      "support": 39200.0
+    },
+    "1": {
+      "precision": 0.9009009009009009,
+      "recall": 1.0,
+      "f1-score": 0.9478672985781991,
+      "support": 800.0
+    },
+    "accuracy": 0.9978,
+    "macro avg": {
+      "precision": 0.9504504504504505,
+      "recall": 0.9988775510204082,
+      "f1-score": 0.9733717941455711,
+      "support": 40000.0
+    },
+    "weighted avg": {
+      "precision": 0.9980180180180179,
+      "recall": 0.9978,
+      "f1-score": 0.9978561098902483,
+      "support": 40000.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      39112,
+      88
+    ],
+    [
+      0,
+      800
+    ]
+  ],
+  "feature_importance": {
+    "amount_vs_avg_ratio": 0.4242651164531708,
+    "is_new_receiver": 0.2461719661951065,
+    "sender_txn_count_24h": 0.19700199365615845,
+    "is_location_mismatch": 0.07502762973308563,
+    "amount": 0.03164612501859665,
+    "hour": 0.011154997162520885,
+    "log_amount": 0.009933297522366047,
+    "is_odd_hour": 0.004798881243914366
+  },
+  "feature_columns": [
+    "amount",
+    "amount_vs_avg_ratio",
+    "hour",
+    "is_odd_hour",
+    "sender_txn_count_24h",
+    "is_new_receiver",
+    "is_location_mismatch",
+    "log_amount"
+  ]
+}

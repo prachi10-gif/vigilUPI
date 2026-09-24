@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#090e18" />
+  <title>vigilUPI | Fraud Detection &amp; Real-Time Risk Monitoring</title>
+  <link rel="stylesheet" href="./dashboard.css" />
+  <script async src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <main class="landing-page" id="landing-page">
+    <nav class="landing-nav"><a class="brand" href="#landing"><span class="brand-mark">v<span>U</span></span><span class="brand-copy"><strong>vigilUPI</strong><small>FRAUD OPERATIONS</small></span></a><div><a href="#landing">Home</a><a href="#dashboard" data-enter-dashboard>Dashboard</a><a href="#how-it-works">How It Works</a><a href="#about">About</a><button class="button button-primary" data-enter-dashboard>Open Dashboard</button></div></nav>
+    <section class="landing-hero" id="landing"><div class="eyebrow">MACHINE LEARNING · REAL-TIME MONITORING</div><h1>UPI Fraud Detection<br/><span>&amp; Real-Time Risk Scoring</span></h1><p>Machine-learning based transaction monitoring using Isolation Forest + XGBoost.</p><button class="button button-primary button-large" data-enter-dashboard>Open Fraud Detection Dashboard <span aria-hidden="true">→</span></button><div class="landing-proof"><span>LOCAL MODEL INFERENCE</span><span>·</span><span>NO PAID AI APIS</span><span>·</span><span>EXPLAINABLE SIGNALS</span></div></section>
+    <section class="landing-section" id="about"><div class="eyebrow">ABOUT THE PROJECT</div><h2>See unusual activity sooner.</h2><p>This system analyzes UPI transaction characteristics and assigns a risk score in real time. It combines anomaly detection with supervised fraud classification to help reviewers prioritize transactions. A score is a signal for review, not proof that fraud occurred.</p><div class="landing-info-grid"><article><span>01 / WHAT IT CHECKS</span><h3>Behavior, amount, timing</h3><p>Transaction value relative to a sender's average, time of day, recent activity frequency, new receivers, and location mismatch when both locations are provided.</p></article><article><span>02 / WHY IT EXISTS</span><h3>More useful transaction triage</h3><p>Large unusual amounts, abnormal timing, repeated transfers, and unexpected recipients can be difficult to review manually at scale. Risk scoring helps bring those patterns into one queue.</p></article><article><span>03 / CRITICAL RISK</span><h3>Strong configured risk signal</h3><p>Critical risk indicates that the transaction strongly matches the system's configured high-risk patterns and should be reviewed. It does not mean the transaction is definitely fraud.</p></article></div></section>
+    <section class="landing-section pipeline-section" id="how-it-works"><div class="eyebrow">HOW IT WORKS</div><h2>From transaction to review alert</h2><div class="pipeline"><span>Transaction</span><b>↓</b><span>Feature Engineering</span><b>↓</b><span>Isolation Forest</span><b>+</b><span>XGBoost</span><b>↓</b><span>Ensemble Risk Score</span><b>↓</b><span>Risk Tier</span><b>↓</b><span>Real-Time Alert</span></div><div class="landing-info-grid model-explain-grid"><article><span>ANOMALY DETECTION</span><h3>Isolation Forest</h3><p>Estimates how unusual a transaction looks compared with a reference distribution of normal transactions.</p></article><article><span>SUPERVISED CLASSIFICATION</span><h3>XGBoost</h3><p>Uses patterns learned from labeled training data to estimate fraud likelihood for the transaction features.</p></article><article><span>EXISTING ENSEMBLE</span><h3>Combined risk score</h3><p>The backend combines normalized Isolation Forest and raw XGBoost scores using existing weights and applies its configured alert and tier thresholds.</p></article></div></section>
+    <section class="landing-section risk-factors"><div class="eyebrow">EDUCATIONAL CONTEXT</div><h2>Why UPI fraud can happen</h2><p>Potential contributing factors include unusual spending behavior, compromised credentials, social engineering, phishing, and fake payment requests. Amount, time, velocity, recipient novelty, and location differences can be useful review signals. No single indicator proves fraud.</p><div class="factor-chips"><span>Unusually large amount</span><span>Unusual transaction time</span><span>High transaction velocity</span><span>New receiver</span><span>Location mismatch</span><span>Abnormal spending</span><span>Compromised credentials</span><span>Social engineering</span><span>Phishing</span><span>Fake payment requests</span></div></section>
+    <footer class="landing-footer">vigilUPI · Educational fraud monitoring demo · Scores are predictions for review.</footer>
+  </main>
+  <div class="app-shell hidden" id="dashboard-app">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#dashboard" aria-label="vigilUPI home">
+        <span class="brand-mark">v<span>U</span></span>
+        <span class="brand-copy"><strong>vigilUPI</strong><small>FRAUD OPERATIONS</small></span>
+      </a>
+      <div class="nav-label">WORKSPACE</div>
+      <nav class="navigation" aria-label="Dashboard navigation">
+        <a class="nav-link active" href="#dashboard"><span class="nav-icon">◫</span>Dashboard</a>
+        <a class="nav-link" href="#scanner"><span class="nav-icon">⌕</span>Transaction Scanner</a>
+        <a class="nav-link" href="#alerts"><span class="nav-icon">◉</span>Fraud Alerts<span class="nav-count" id="nav-alert-count">0</span></a>
+        <a class="nav-link" href="#transactions"><span class="nav-icon">▤</span>Transactions</a>
+        <a class="nav-link" href="#performance"><span class="nav-icon">◒</span>Model Performance</a>
+        <a class="nav-link" href="#health"><span class="nav-icon">⌁</span>System Health</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="connection-card">
+          <span class="connection-dot" id="sidebar-status-dot"></span>
+          <div><strong id="sidebar-status">Connecting</strong><small>FastAPI scoring service</small></div>
+        </div>
+        <div class="sidebar-foot">LOCAL DEMO · NO PAID API</div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobile-menu" aria-label="Toggle navigation">☰</button>
+        <div class="breadcrumb">Risk operations <span>/</span> <strong id="current-section">Dashboard</strong></div>
+        <div class="topbar-right"><span class="date-label" id="today-label"></span><span class="live-pill"><i></i> LIVE MONITORING</span></div>
+      </header>
+
+      <section class="page-section dashboard-overview-collapsed" id="dashboard">
+        <div class="page-heading">
+          <div><div class="eyebrow">RISK INTELLIGENCE / TRANSACTION STREAM</div><h1>UPI Fraud Detection &amp; Real-Time Risk Monitoring</h1><p>Monitor transaction risk, investigate alerts, and inspect model health from one workspace.</p></div>
+          <div class="sync-label">LAST SYNC <strong id="last-sync">--</strong></div>
+        </div>
+
+        <div class="kpi-grid">
+          <article class="kpi-card"><div class="kpi-top"><span>Total Transactions</span><span class="kpi-icon mint">▤</span></div><strong id="kpi-total">--</strong><small>Scored in this API session</small></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Fraudulent / Flagged</span><span class="kpi-icon red">!</span></div><strong id="kpi-flagged">--</strong><small>Actual model predictions</small></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Low Risk</span><span class="kpi-icon mint">01</span></div><strong id="kpi-low">--</strong><small>Scored transactions</small></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Medium Risk</span><span class="kpi-icon amber">02</span></div><strong id="kpi-medium">--</strong><small>Scored transactions</small></article>
+          <article class="kpi-card"><div class="kpi-top"><span>High Risk</span><span class="kpi-icon amber">03</span></div><strong id="kpi-high">--</strong><small>Scored transactions</small></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Critical Risk</span><span class="kpi-icon red">04</span></div><strong id="kpi-critical">--</strong><small>Scored transactions</small></article>
+        </div>
+
+        <div class="feature-launcher"><div><div class="eyebrow">WORKSPACE SHORTCUTS</div><h2>Explore the dashboard</h2><p>Choose a tool to open its focused workspace.</p></div><div class="feature-grid"><button data-open-section="scanner"><b>Real-Time Detection</b><span>Score a transaction with the trained models</span><i>Open →</i></button><button data-open-section="transactions"><b>Transaction Analysis</b><span>Search and inspect scored transactions</span><i>Open →</i></button><button data-focus-chart="risk-chart"><b>Risk Distribution</b><span>View live counts by risk tier</span><i>Open →</i></button><button data-open-section="explanation"><b>Model Explanation</b><span>See weights, thresholds, and score context</span><i>Open →</i></button><button data-open-section="indicators"><b>Fraud Indicators</b><span>Learn what transaction signals mean</span><i>Open →</i></button><button data-open-section="alerts"><b>Transaction Alerts</b><span>Review flagged predictions</span><i>Open →</i></button></div></div>
+
+        <button class="feature-open-wide" data-expand-dashboard>Open live overview: alerts, risk distribution, and charts →</button>
+        <article class="risk-monitor panel" id="latest-risk-panel">
+          <div class="risk-monitor-head"><div><div class="eyebrow">REAL-TIME RISK MONITOR</div><h2>Latest analyzed transaction</h2></div><span class="risk-chip risk-none" id="latest-tier">Awaiting scan</span></div>
+          <div class="risk-empty" id="risk-empty"><span class="empty-orbit">⌁</span><div><strong>No transaction analyzed yet</strong><p>Run the scanner or send a demo transaction to see the real model response here.</p></div><a class="button button-primary" href="#scanner">Analyze a transaction</a></div>
+          <div class="risk-result hidden" id="risk-result">
+            <div class="risk-score-block"><span>ENSEMBLE RISK SCORE</span><strong id="latest-score">--</strong><div class="score-meter"><i id="latest-score-meter"></i></div><small id="latest-status">--</small></div>
+            <div class="risk-details"><div><span>Transaction ID</span><strong id="latest-id">--</strong></div><div><span>Timestamp</span><strong id="latest-time">--</strong></div><div><span>Threshold used</span><strong id="latest-threshold">--</strong></div><div><span>Fraud status</span><strong id="latest-fraud">--</strong></div></div>
+            <div class="model-score-list"><div><span>Isolation Forest</span><div class="mini-track"><i id="latest-iso-bar"></i></div><strong id="latest-iso">--</strong></div><div><span>XGBoost</span><div class="mini-track"><i id="latest-xgb-bar"></i></div><strong id="latest-xgb">--</strong></div><div><span>Ensemble</span><div class="mini-track"><i id="latest-ensemble-bar"></i></div><strong id="latest-ensemble">--</strong></div></div>
+          </div>
+          <div class="risk-error hidden" id="risk-error" role="alert"></div>
+        </article>
+
+        <div class="section-title"><div><h2>Transaction intelligence</h2><p>Charts use labeled dataset records or real API scoring sessions.</p></div><span class="data-source-tag" id="chart-source">Loading sources</span></div>
+        <div class="chart-grid">
+          <article class="panel chart-card"><div class="chart-heading"><div><h3>Fraud vs legitimate</h3><small>Dataset ground-truth labels</small></div><span class="chart-mark">01</span></div><div class="chart-wrap"><canvas id="fraud-chart" aria-label="Fraud versus legitimate transactions"></canvas><div class="chart-empty hidden" id="fraud-chart-empty">Historical labels unavailable</div></div></article>
+          <article class="panel chart-card"><div class="chart-heading"><div><h3>Fraud Risk Distribution</h3><small>Actual scored transactions by risk level</small></div><span class="chart-mark">02</span></div><div class="chart-wrap"><canvas id="risk-chart" aria-label="Fraud risk distribution"></canvas><div class="chart-empty" id="risk-chart-empty">No transactions scored yet.</div></div><div class="distribution-caption" id="risk-chart-caption"></div></article>
+          <article class="panel chart-card"><div class="chart-heading"><div><h3>Fraud trend over time</h3><small>Historical labels by month</small></div><span class="chart-mark">03</span></div><div class="chart-wrap chart-wrap-wide"><canvas id="trend-chart" aria-label="Fraud trend over time"></canvas><div class="chart-empty hidden" id="trend-chart-empty">Historical trend unavailable</div></div></article>
+          <article class="panel chart-card"><div class="chart-heading"><div><h3>Amount vs risk score</h3><small>Real model-scored transactions</small></div><span class="chart-mark">04</span></div><div class="chart-wrap"><canvas id="amount-chart" aria-label="Transaction amount compared to risk score"></canvas><div class="chart-empty" id="amount-chart-empty">Score a transaction to populate this chart.</div></div></article>
+          <article class="panel chart-card chart-card-wide"><div class="chart-heading"><div><h3>Model score comparison</h3><small>Isolation Forest, XGBoost, ensemble / latest scores</small></div><span class="chart-mark">05</span></div><div class="chart-wrap"><canvas id="model-chart" aria-label="Model score comparison"></canvas><div class="chart-empty" id="model-chart-empty">Score a transaction to populate this chart.</div></div></article>
+        </div>
+      </section>
+
+      <section class="page-section" id="scanner">
+        <div class="section-title section-title-spaced"><div><div class="eyebrow">LIVE MODEL INFERENCE</div><h2>Transaction Scanner</h2><p>Submissions go directly to the configured FastAPI <code>/score</code> endpoint. Prediction values below are returned by the trained model.</p></div></div>
+        <div class="scanner-layout">
+          <form class="panel scanner-form" id="scanner-form" novalidate>
+            <div class="form-grid">
+              <label>Transaction ID<input id="transaction-id" name="transaction_id" value="test-001" maxlength="100" required /></label>
+              <label>Amount (INR)<input id="amount" name="amount" type="number" min="0.01" step="0.01" value="12000" required /></label>
+              <label>Timestamp<input id="timestamp" name="timestamp" type="datetime-local" required /></label>
+              <label>Sender Average Amount (30 days)<input id="sender-average" name="sender_avg_amount_30d" type="number" min="0" step="0.01" value="5000" required /></label>
+              <label>Sender Transactions (24h)<input id="sender-count" name="sender_txn_count_24h" type="number" min="0" step="1" value="2" required /></label>
+              <label>Location<input id="location" name="location" value="BHOPAL" maxlength="100" /></label>
+              <label>Sender Home City<input id="sender-home-city" name="sender_home_city" value="BHOPAL" maxlength="100" /></label>
+              <label class="checkbox-field"><input id="new-receiver" name="is_new_receiver" type="checkbox" checked /><span>New receiver</span></label>
+            </div>
+            <div class="form-actions"><button type="submit" class="button button-primary" id="analyze-button">Analyze Transaction</button><button type="button" class="button button-secondary" id="simulate-button">Simulate Transaction</button><span class="form-hint">Local model API · No external AI service</span></div>
+            <div class="form-error hidden" id="form-error" role="alert"></div>
+          </form>
+          <aside class="panel demo-panel"><div class="eyebrow">ONE-CLICK DEMO</div><h3>Demo transactions</h3><p>Each preset is sent to the real <code>/score</code> endpoint. Model outputs are never hardcoded.</p>
+            <button type="button" class="demo-button" data-demo="legitimate"><span class="demo-icon demo-green">✓</span><span><strong>Legitimate transaction</strong><small>Typical amount and activity</small></span><b>→</b></button>
+            <button type="button" class="demo-button" data-demo="odd-hour"><span class="demo-icon demo-red">!</span><span><strong>Odd-hour / high-value</strong><small>Large amount at 02:47</small></span><b>→</b></button>
+            <button type="button" class="demo-button" data-demo="velocity"><span class="demo-icon demo-amber">↗</span><span><strong>High-velocity transaction</strong><small>27 sender transactions in 24h</small></span><b>→</b></button>
+          </aside>
+        </div>
+      </section>
+
+      <section class="page-section" id="alerts">
+        <div class="section-title section-title-spaced"><div><div class="eyebrow">INVESTIGATION QUEUE</div><h2>Fraud Alerts</h2><p>Recent flagged predictions from this API process. Results clear when the backend restarts.</p></div><div class="table-filter-row"><label class="sr-only" for="alert-filter">Filter alerts</label><select id="alert-filter"><option value="all">All alerts</option><option value="Low">Low</option><option value="Medium">Medium</option><option value="High">High</option><option value="Critical">Critical</option><option value="flagged">Flagged</option></select></div></div>
+        <div class="panel table-panel"><div class="table-scroll"><table><thead><tr><th>Transaction ID</th><th>Amount</th><th>Risk Score</th><th>Risk Tier</th><th>Fraud Status</th><th>Timestamp</th><th>Action</th></tr></thead><tbody id="alerts-body"><tr><td colspan="7" class="empty-cell">Loading alerts...</td></tr></tbody></table></div><div class="table-foot" id="alerts-foot"></div></div>
+      </section>
+
+      <section class="page-section" id="transactions">
+        <div class="section-title section-title-spaced"><div><div class="eyebrow">SESSION HISTORY</div><h2>Transactions</h2><p>Contains only transactions actually submitted to and scored by this running API.</p></div><div class="table-filter-row"><input type="search" id="transaction-search" placeholder="Search ID or location" aria-label="Search transactions"/><select id="transaction-risk-filter" aria-label="Filter by risk"><option value="all">All risk tiers</option><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select><select id="transaction-status-filter" aria-label="Filter by status"><option value="all">All statuses</option><option value="flagged">Flagged</option><option value="clear">Clear</option></select></div></div>
+        <div class="score-section-heading"><div><h3>Transaction Risk Score</h3><p>Individual ensemble scores from 0 to 1. Colored ranges use held-out validation cutoffs.</p></div><div class="score-range-legend" id="score-range-legend"></div></div>
+        <div class="panel table-panel"><div class="table-scroll"><table><thead><tr><th>Transaction ID</th><th>Amount</th><th>Timestamp</th><th>Risk Score</th><th>Risk Tier</th><th>Flagged</th><th>Action</th></tr></thead><tbody id="transactions-body"><tr><td colspan="7" class="empty-cell">No scored transactions yet.</td></tr></tbody></table></div><div class="table-foot pagination" id="transactions-foot"></div></div>
+      </section>
+
+      <section class="page-section" id="performance">
+        <div class="section-title section-title-spaced"><div><div class="eyebrow">TRAINED MODEL EVALUATION</div><h2>Model Performance</h2><p>Metrics loaded directly from <code>model_artifacts/metrics.json</code>.</p></div><span class="data-source-tag" id="metrics-source">Loading metrics</span></div>
+        <div id="metrics-error" class="panel error-panel hidden" role="alert"></div>
+        <div class="metrics-grid">
+          <article class="panel metric-card"><span>Accuracy</span><strong id="metric-accuracy">--</strong><small>Held-out evaluation set</small></article>
+          <article class="panel metric-card"><span>Precision</span><strong id="metric-precision">--</strong><small>Fraud class (1)</small></article>
+          <article class="panel metric-card"><span>Recall</span><strong id="metric-recall">--</strong><small>Fraud class (1)</small></article>
+          <article class="panel metric-card"><span>F1 Score</span><strong id="metric-f1">--</strong><small>Fraud class (1)</small></article>
+        </div>
+        <div class="performance-layout">
+          <article class="panel performance-card"><div class="chart-heading"><div><h3>Confusion matrix</h3><small>Rows: actual / columns: predicted</small></div></div><div class="confusion-matrix" id="confusion-matrix"><span>TN</span><span>FP</span><span>FN</span><span>TP</span><b id="cm-tn">--</b><b id="cm-fp">--</b><b id="cm-fn">--</b><b id="cm-tp">--</b></div><div class="matrix-legend"><span><i class="legend-good"></i>Correct</span><span><i class="legend-error"></i>Incorrect</span></div></article>
+          <article class="panel performance-card model-config"><div class="chart-heading"><div><h3>Alert configuration</h3><small>Read from trained artifact and validation data</small></div></div><div class="config-row"><span>Alert threshold</span><strong id="metric-threshold">--</strong></div><div class="config-row"><span>Isolation Forest weight</span><strong id="metric-iso-weight">--</strong></div><div class="config-row"><span>XGBoost weight</span><strong id="metric-xgb-weight">--</strong></div><div class="config-row"><span>Ensemble ROC-AUC</span><strong id="metric-auc">--</strong></div><div class="config-row"><span>Average precision</span><strong id="metric-ap">--</strong></div><p class="config-note" id="metric-calibration-method">Loading validation calibration...</p></article>
+        </div>
+      </section>
+
+      <section class="page-section" id="health">
+        <div class="section-title section-title-spaced"><div><div class="eyebrow">SERVICE DIAGNOSTICS</div><h2>System Health</h2><p>Checks are made against the configured FastAPI service and model artifact files.</p></div><span class="health-overall" id="health-overall"><i></i><span>CHECKING</span></span></div>
+        <div class="health-grid">
+          <article class="panel health-card"><span class="health-indicator" id="health-api-dot"></span><div><small>API STATUS</small><strong id="health-api">Checking...</strong></div></article>
+          <article class="panel health-card"><span class="health-indicator" id="health-model-dot"></span><div><small>ML MODEL</small><strong id="health-model">Checking...</strong></div></article>
+          <article class="panel health-card"><span class="health-indicator" id="health-fastapi-dot"></span><div><small>FASTAPI</small><strong id="health-fastapi">Checking...</strong></div></article>
+          <article class="panel health-card"><span class="health-indicator" id="health-artifacts-dot"></span><div><small>MODEL ARTIFACTS</small><strong id="health-artifacts">Checking...</strong></div></article>
+          <article class="panel health-card"><span class="health-indicator indicator-neutral"></span><div><small>LAST RESPONSE TIME</small><strong id="health-latency">--</strong></div></article>
+          <article class="panel health-card"><span class="health-indicator indicator-neutral"></span><div><small>BACKEND URL</small><strong id="health-url">Configured API endpoint</strong></div></article>
+        </div>
+        <div class="health-note" id="health-note">The server binds to 127.0.0.1 and is not exposed publicly.</div>
+      </section>
+
+      <section class="page-section" id="explanation"><div class="section-title section-title-spaced"><div><div class="eyebrow">MODEL TRANSPARENCY</div><h2>How is the Risk Score Calculated?</h2><p>These weights and cutoffs come from the loaded backend configuration.</p></div></div><article class="panel threshold-panel"><h3>Existing ensemble formula</h3><p id="explanation-formula">Weighted blend of the two model scores.</p></article><div class="score-method-grid"><article class="panel score-method-card"><span>ISOLATION FOREST</span><strong id="explanation-iso-weight">--</strong><p>Raw anomaly scores are normalized against the stored held-out reference distribution.</p></article><article class="panel score-method-card"><span>XGBOOST</span><strong id="explanation-xgb-weight">--</strong><p>The existing model's raw <code>predict_proba</code> output is used in the ensemble.</p></article></div><article class="panel threshold-panel"><h3>Configured score tiers</h3><p>Risk tiers describe score ranges. The alert threshold and tier cutoffs below are returned by the backend.</p><div id="explanation-thresholds" class="threshold-list">Loading backend configuration…</div><small id="explanation-method"></small></article></section>
+
+      <section class="page-section" id="indicators"><div class="section-title section-title-spaced"><div><div class="eyebrow">FEATURE GUIDE</div><h2>Fraud Indicators</h2><p>Signals used by the project feature pipeline. A single indicator never proves fraud.</p></div></div><div class="indicator-grid" id="indicator-grid"></div></section>
+
+      <footer class="app-footer"><span>vigilUPI <i>·</i> FRAUD MONITORING DEMO</span><span>Scores are predictions; historical fraud counts use the dataset ground-truth labels.</span></footer>
+    </main>
+  </div>
+  <dialog class="transaction-dialog" id="transaction-dialog" aria-labelledby="dialog-title"><form method="dialog"><button class="dialog-close" aria-label="Close details">×</button></form><div id="transaction-detail-content"></div></dialog>
+  <div class="toast-region" id="toast-region" aria-live="polite"></div>
+</body>
+</html>
