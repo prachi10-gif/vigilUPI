@@ -37,7 +37,7 @@ jobs:
       - name: Upload site
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./dashboard/dist
+          path: ./docs
 
   deploy:
     environment:
